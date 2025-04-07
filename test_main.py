@@ -1,5 +1,4 @@
-def greet(name: str) -> str:
-    return f"Hello, {name}!"
+from main import greet
 
-if __name__ == "__main__":
-    print(greet("CI/CD"))
+def test_greet():
+    assert greet("CI/CD") == "Hello, CI/CD!"
