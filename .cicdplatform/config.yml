@@ -1,0 +1,48 @@
+version: '1.0'
+
+jobs:
+
+  runs-on: python-ci-base:latest
+
+  setup:
+    steps:
+      - name: Clean Workspace
+        run: rm -rf workspace/app
+
+      - name: Clone Repository
+        run: git clone https://github.com/Sectani/python-app workspace/app
+
+      - name: Install Dependencies
+        working-directory: workspace/app
+        run: |
+          pip install -r requirements.txt --root-user-action=ignore
+
+  test:
+    depends-on: setup
+    steps:
+      - name: Run Tests
+        working-directory: workspace/app
+        run: |
+          mkdir -p test-reports
+          pytest --junitxml=test-reports/results.xml
+          mkdir -p /artifacts/test-reports
+          cp test-reports/results.xml /artifacts/test-reports/
+
+  build:
+    depends-on: test
+    steps:
+      - name: Build Project
+        working-directory: workspace/app
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Save Artifacts
+        run: cp dist/* /artifacts/
+
+  # Optional: Deploy to Staging
+  deploy_staging:
+    depends-on: build
+    steps:
+     - name: Deploy to Staging Environment
+       run: |
+         echo "Deploying to staging environment..."  # Replace with actual deployment script or command
