@@ -39,8 +39,7 @@ jobs:
       - name: Save Artifacts
         run: cp dist/* /artifacts/
 
-  # Optional: Deploy to Staging
-  deploy_staging:
+  docker_push:
     depends-on: build
     steps:
       - name: Build Docker Image
