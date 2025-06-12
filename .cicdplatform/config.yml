@@ -43,6 +43,14 @@ jobs:
   deploy_staging:
     depends-on: build
     steps:
-     - name: Deploy to Staging Environment
-       run: |
-         echo "Deploying to staging environment..."  # Replace with actual deployment script or command
+      - name: Build Docker Image
+        working-directory:  workspace/app
+        run: |
+          docker build -t sectani/python-app:latest .
+
+      - name: Login to Docker Hub
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+
+      - name: Push Docker Image
+        run: docker push sectani/python-app:latest
